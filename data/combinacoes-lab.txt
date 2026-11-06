@@ -1,0 +1,2 @@
+:aluno-lab:senha123
+:suporte-lab:Lab-Demo-2026!
