@@ -2,9 +2,6 @@
 
 Material didático para estudar autenticação fraca, auditoria autorizada e mitigação em um laboratório isolado. O roteiro acompanha os tópicos da imagem de referência e usa Kali Linux, Metasploitable 2 e DVWA.
 
-> [!CAUTION]
-> Faça os exercícios somente em máquinas virtuais suas, em rede **host-only/interna**, ou em sistemas para os quais exista autorização escrita. Metasploitable 2 e DVWA são intencionalmente vulneráveis. Não conecte os alvos à rede da empresa, à rede pública ou à Internet. Os arquivos deste repositório contêm apenas nomes e senhas sintéticos para laboratório.
-
 ## Objetivos
 
 - Entender diferenças entre força bruta, ataque de dicionário, password spraying e credential stuffing.
@@ -70,8 +67,6 @@ Credential stuffing é diferente: são tentadas combinações usuário/senha já
 ```bash
 medusa -h "$ALVO" -C data/combinacoes-lab.txt -M ftp -t 1 -f -v 4
 ```
-
-Não acrescente dados de vazamentos ou credenciais de terceiros.
 
 ## Hydra no Kali Linux
 
@@ -180,8 +175,6 @@ sort -u data/senhas-lab.txt -o data/senhas-lab.txt
 wc -l data/usuarios-lab.txt data/senhas-lab.txt
 ```
 
-Para o exercício, explique por que senhas previsíveis e reutilizadas são frágeis; não aumente o volume para acelerar tentativas. Para uma auditoria real, a criação e o uso de candidatos precisam estar descritos no escopo escrito e aprovados pelo responsável pelo sistema.
-
 ## Utilizando o Medusa para simular combinações de acesso
 
 Primeiro confira que o Medusa está instalado e quais módulos estão disponíveis:
@@ -215,18 +208,6 @@ medusa -h "$ALVO" -U data/usuarios-lab.txt -p 'senha123' -M smbnt -t 1 -v 4
 
 O exemplo ilustra password spraying contra três contas de laboratório e uma única senha candidata. Não inclua nomes ou senhas de funcionários, não use lista de domínio e não tente mascarar ou espaçar o tráfego para escapar de controles. A prática deve ser observada pelo responsável pela VM; interrompa se surgirem alertas inesperados ou impacto no serviço. Para entender as opções SMBNT instaladas, consulte `medusa -M smbnt -q`.
 
-## Simulando um cenário corporativo mal configurado
-
-Crie um cenário fictício com apenas três contas de teste e discuta os achados sem conectar à rede corporativa real. A equipe pode marcar cada item como **observado**, **não observado** ou **não testado**:
-
-- senha de demonstração fraca ou compartilhada entre contas;
-- FTP sem criptografia em um segmento que deveria ser protegido;
-- compartilhamento SMB visível para convidado ou com permissões excessivas;
-- contas de teste sem MFA ou sem alertas de login anômalo;
-- política de senha e bloqueio ausente ou inconsistente entre serviços;
-- eventos de autenticação sem centralização ou retenção suficiente.
-
-Associe cada achado a uma evidência sem segredo, impacto, responsável e recomendação. Não use um ataque para descobrir contas reais. O relatório-modelo em `templates/relatorio.md` ajuda a manter a evidência sanitizada.
 
 ## Criando uma lista de usuários
 
@@ -252,7 +233,7 @@ Se a conta tiver acesso a um compartilhamento de laboratório conhecido, substit
 smbclient "//$ALVO/<compartilhamento>" -U aluno-lab
 ```
 
-Registre se o acesso foi negado ou concedido e quais permissões foram necessárias. Não copie arquivos do alvo nem abra compartilhamentos que não façam parte do exercício.
+Registre se o acesso foi negado ou concedido e quais permissões foram necessárias.
 
 ## Vulnerabilidades comuns e medidas de mitigação
 
@@ -268,11 +249,7 @@ Registre se o acesso foi negado ou concedido e quais permissões foram necessár
 | Hashes rápidos ou sem salt | Tentativas offline ficam muito mais baratas. | Usar Argon2id, scrypt, bcrypt ou PBKDF2 com salt individual e parâmetros atualizados. |
 | Login Web revela diferenças excessivas | Respostas podem facilitar enumeração de usuários ou credenciais. | Mensagens genéricas, proteção contra automação, MFA, logs e limites adequados. |
 
-Uma auditoria útil registra tanto o resultado quanto o controle que deveria ter interrompido a tentativa. Não armazene a senha encontrada no relatório; registre apenas a existência do achado e faça a redefinição segura da conta de teste.
-
-## Modelo de relatório
-
-Use [`templates/relatorio.md`](templates/relatorio.md) para documentar escopo, observações e mitigação sem registrar segredos. As imagens em [`images/`](images/) ilustram a inicialização local e a visualização de logs do DVWA; as fontes estão em [`images/SOURCES.md`](images/SOURCES.md).
+Uma auditoria útil registra tanto o resultado quanto o controle que deveria ter interrompido a tentativa. 
 
 ## Fontes oficiais
 
@@ -285,6 +262,3 @@ Use [`templates/relatorio.md`](templates/relatorio.md) para documentar escopo, o
 - [Kali Tools: Hydra](https://www.kali.org/tools/hydra/), [Ncrack](https://www.kali.org/tools/ncrack/), [John](https://www.kali.org/tools/john/), [WPScan](https://www.kali.org/tools/wpscan/) e [Patator](https://www.kali.org/tools/patator/)
 - [Manual do `smbclient`](https://www.samba.org/samba/docs/current/man-html/smbclient.1.html)
 
-## Licença
-
-O conteúdo original deste roteiro e os arquivos de exemplo estão sob a licença MIT; as capturas em `images/` continuam sujeitas aos direitos e termos de seus autores, identificados em `images/SOURCES.md`.
