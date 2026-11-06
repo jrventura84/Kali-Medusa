@@ -98,51 +98,20 @@ Patator é um framework modular de testes de autenticação e protocolo. A flexi
 │ Nmap, Medusa, smbclient        │                                    │ FTP/SMB para estudo isolado  │
 └───────────────────────────────┘                                    └──────────────────────────────┘
 
-Navegador no Kali ── 127.0.0.1:4280 ── DVWA local em contêiner
 ```
 
-1. Crie as VMs em um hipervisor local e conecte as interfaces de laboratório somente a uma rede host-only/interna.
-2. Não use bridge para a VM vulnerável. Não encaminhe portas do roteador nem exponha os serviços da VM para a LAN.
-3. Baixe Metasploitable 2 somente da página indicada pela documentação da Rapid7. Tire um snapshot antes do exercício.
-4. Para a parte Web, use `compose.yaml` deste repositório. A publicação de porta está vinculada a `127.0.0.1`, então o DVWA fica acessível somente pela própria máquina que executa o contêiner.
-
-Capturas do guia oficial do DVWA mostram onde acompanhar o contêiner e seus logs:
-
-![Visão geral do contêiner DVWA no Docker Desktop](images/dvwa-compose-overview.png)
-
-![Logs do contêiner DVWA no Docker Desktop](images/dvwa-container-logs.png)
-
-Instale apenas os utilitários necessários no Kali:
-
-```bash
-sudo apt update
-sudo apt install -y medusa nmap smbclient hydra ncrack john wpscan patator
-```
-
-Suba o DVWA local e acesse `http://127.0.0.1:4280`:
-
-```bash
-docker compose up -d
-```
-
-Finalize a atividade e pare os contêineres:
-
-```bash
-docker compose down
-```
-
-O DVWA foi criado intencionalmente para estudo de segurança e deve permanecer em loopback. A rede Docker do arquivo está marcada como interna, sem conectividade externa. A configuração de banco incluída é apenas para o laboratório; não a reutilize em produção.
+Crie as VMs e conecte as interfaces a uma rede host-only/interna.
 
 ## Alcançando a máquina vulnerável no Metasploitable 2
 
-Depois de iniciar a VM, confirme seu endereço IP no console local. A documentação da Rapid7 descreve o uso de `ifconfig` na VM. Na máquina Kali, defina o IP **individual** que você confirmou na interface host-only:
+Depois de iniciar a VM, confirme seu endereço IP no console local.
 
 ```bash
 ALVO=192.168.56.101   # exemplo apenas; substitua pelo IP confirmado da sua VM
 nmap -sV -p 21,80,139,445 "$ALVO"
 ```
 
-Esse inventário consulta somente as portas FTP, HTTP e SMB necessárias para o roteiro. Se o IP não pertencer à sua VM de laboratório, se a rede não estiver isolada ou se o serviço não for esperado, não prossiga. O resultado depende da imagem e das configurações da VM.
+Esse inventário consulta somente as portas FTP, HTTP e SMB necessárias.
 
 ## Criando arquivos de usuários e senhas comuns
 
@@ -151,8 +120,6 @@ Os arquivos em `data/` são pequenos e artificiais. Para que um teste tenha resu
 - `data/usuarios-lab.txt`: três nomes fictícios.
 - `data/senhas-lab.txt`: três senhas de demonstração, incluindo um exemplo fraco.
 - `data/combinacoes-lab.txt`: dois pares de teste para um exercício de credential stuffing simulado.
-
-O arquivo de senhas contém poucos itens de propósito. Não o expanda com dumps, listas vazadas ou dados pessoais.
 
 ## Ataques de força bruta em formulários de login Web
 
